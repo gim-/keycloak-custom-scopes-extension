@@ -15,7 +15,7 @@ And transforms it into Array type:
 
 ## Run playground
 
-If you have Docker daemon running on your machine, you can just run [KeycloakDevRunner](src/test/java/com/example/keycloak/ScopeMappingTest.java).
+If you have Docker daemon running on your machine, you can just run [KeycloakDevRunner](src/test/java/KeycloakDevRunner.java).
 
 It will launch pre-configured Keycloak instance in a temporary Docker container with the following client credentials:
 

@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.example'
+version = '1.0'
+
+def keycloakVersion = '22.0.0'
+def restAssuredVersion = '5.3.0'
+// Check testcontainers Keycloak version compatibility here:
+// https://github.com/dasniko/testcontainers-keycloak#testcontainers--keycloak-version-compatiblity
+def testContainersKeycloakVersion = '2.2.2'
+
+repositories {
+    maven {
+        url = 'https://repository.jboss.org/nexus/content/groups/public/'
+    }
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly "org.keycloak:keycloak-server-spi:${keycloakVersion}"
+    compileOnly "org.keycloak:keycloak-quarkus-server:${keycloakVersion}"
+    compileOnly "org.keycloak:keycloak-server-spi:${keycloakVersion}"
+    compileOnly "org.keycloak:keycloak-server-spi-private:${keycloakVersion}"
+    compileOnly "org.keycloak:keycloak-core:${keycloakVersion}"
+    compileOnly "org.keycloak:keycloak-services:${keycloakVersion}"
+    compileOnly "org.keycloak:keycloak-saml-core:${keycloakVersion}"
+    compileOnly "org.keycloak:keycloak-saml-adapter-core:${keycloakVersion}"
+    compileOnly "org.keycloak:keycloak-saml-adapter-api-public:${keycloakVersion}"
+    compileOnly "org.keycloak:keycloak-saml-core-public:${keycloakVersion}"
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+    testImplementation 'com.auth0:java-jwt:4.3.0'
+    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    testImplementation "io.rest-assured:json-path:${restAssuredVersion}"
+    testImplementation "com.github.dasniko:testcontainers-keycloak:${testContainersKeycloakVersion}"
+    testImplementation 'org.jboss.slf4j:slf4j-jboss-logging:1.2.1.Final'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+sourceSets {
+    main {
+        output.resourcesDir = "build/kc-extension"
+        java.destinationDirectory.set(file('build/kc-extension'))
+    }
+    testIntegration {
+        java.srcDir 'src/test-integration/java'
+        resources.srcDir 'src/test-integration/resources'
+
+        compileClasspath += main.output + test.output
+        runtimeClasspath += main.output + test.output
+    }
+}
+configurations {
+    testIntegrationImplementation.extendsFrom testImplementation
+    testIntegrationRuntimeOnly.extendsFrom testRuntime
+}
